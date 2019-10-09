@@ -2,26 +2,35 @@
 
 #include "mvc.hpp"
 
-class test_mvc : public QObject
+class test_Value_Node : public QObject
 {
     Q_OBJECT
 public:
-    test_mvc(){}
-    ~test_mvc(){}
+    test_Value_Node(){}
+    ~test_Value_Node(){}
 
 private slots:
-    void test_set_temperature();
+    void test_set_get_value();
 
 private:
 
 };
 
 
-void test_mvc::test_set_temperature()
+void test_Value_Node::test_set_get_value()
 {
-    QFAIL("Test not implemented.");
+    Value_Node n;
+
+    const Value_Node::value_t v = 5;
+    n.set(v);
+    QVERIFY(n.get() == v);
+
+    n.set(v+1);
+    QVERIFY(n.get() == v+1);
+
 }
 
-QTEST_APPLESS_MAIN(test_mvc)
+
+QTEST_APPLESS_MAIN(test_Value_Node)
 
 #include "test_mvc.moc"
