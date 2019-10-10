@@ -13,20 +13,19 @@ void Model_Node::notify_subscribers() const
     }
 }
 
-std::string Model_Node::notification() const
-{
-    return topic;
-}
-
-std::string Tree_Model_Node::notification() const
+Model_Node::string Model_Node::notification() const
 {
     std::stringstream s;
     build_topic(s);
+    add_value_string(s);
 
     return s.str();
 }
 
-void Tree_Model_Node::build_topic(std::ostream& s) const
+void Model_Node::add_value_string(ostream &) const
+{}
+
+void Tree_Model_Node::build_topic(ostream& s) const
 {
     if (parent !=0)
     {

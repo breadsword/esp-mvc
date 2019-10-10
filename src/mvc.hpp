@@ -7,17 +7,16 @@
 
 #include <sstream>
 
-// TODO: how to establish a MQTT-like info service for the notification of any Model?
-//
-// What if Model had a function std::string notification() const, which returned the message including value?
-// Then the callback_t would get a pointer to the model and could call notification() on it.
-// Better: make notification() something we could put on an iostream.
+// TODO: make notification() something we could put on an iostream as in
+// std::cout << m.notification()
 
 
 class Model_Node
 {
 public:
-    Model_Node(std::string _t= "") : topic{_t}
+    typedef std::string string;
+
+    Model_Node()
     {}
     virtual ~Model_Node(){}
 
@@ -25,31 +24,36 @@ public:
     void register_change_callback(callback_t);
     void notify_subscribers() const;
 
-    virtual std::string notification() const;
-    const std::string topic;
-
+    // notification uses algorithm pattern
+    string notification() const;
     std::vector<callback_t> subscribers;
+
+protected:
+    typedef std::ostream ostream;
+    // make these function protected to allow changing the std::ostream interface
+    virtual void build_topic(ostream&) const = 0;
+    virtual void add_value_string(ostream&) const;
 };
 
 class Tree_Model_Node : public Model_Node
 {
 public:
-    Tree_Model_Node(std::string topic = "", Tree_Model_Node *_parent=nullptr) : Model_Node{topic}, parent{_parent}
+    Tree_Model_Node(string _topic = "", Tree_Model_Node *_parent=nullptr) : Model_Node{}, topic{_topic}, parent{_parent}
     {}
 
-    virtual std::string notification() const override;
-
     constexpr static auto separator = "/";
-    void build_topic(std::ostream&) const;
-
+    const string topic;
     Tree_Model_Node* parent;
+
+protected:
+    virtual void build_topic(ostream&) const override;
 };
 
 template <typename T>
 class Value_Model : public Tree_Model_Node{
 public:
     typedef T value_t;
-    Value_Model(T _value, std::string topic, Tree_Model_Node *parent = nullptr) : Tree_Model_Node{topic, parent}, value{_value}
+    Value_Model(T _value, string topic, Tree_Model_Node *parent = nullptr) : Tree_Model_Node{topic, parent}, value{_value}
     {}
 
     Value_Model() : Tree_Model_Node{}, value{}
@@ -58,7 +62,8 @@ public:
     void set(T);
     T get() const;
 
-    virtual std::string notification() const override;
+protected:
+    virtual void add_value_string(ostream&) const override;
 
 private:
     T value;
@@ -78,12 +83,9 @@ T Value_Model<T>::get() const
 }
 
 template<typename T>
-std::string Value_Model<T>::notification() const
+void Value_Model<T>::add_value_string(ostream& s) const
 {
-    std::stringstream s;
-    build_topic(s);
     s << " " << value;
-    return s.str();
 }
 
 #endif //MVC_HPP_INCLUDED
