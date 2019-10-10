@@ -9,6 +9,11 @@ void Model::notify_subscribers() const
 {
     for(auto cb : subscribers)
     {
-        cb();
+        cb(*this);
     }
+}
+
+std::string Model::notification() const
+{
+    return topic;
 }
