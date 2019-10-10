@@ -2,6 +2,8 @@
 
 #include "mvc.hpp"
 
+using namespace std::string_literals;
+
 class test_Value_Node : public QObject
 {
     Q_OBJECT
@@ -15,23 +17,16 @@ private slots:
     void test_callback_lambda();
     void test_multiple_callbacks();
 
-/*
     // Test Tree_Model_Node tree setup
     void test_no_parent();
     void test_parent_build_path();
-*/
 
     // Test Value_Node value storage
     void test_set_get_value();
     void test_value_set_notifies();
 
-/*
-    // Test Model_Node notification?? -> best on Value_Node
-    void test_no_parent_value_int();
-    void test_no_parent_value_bool();
-    void test_no_parent_value_float();
-    void test_no_parent_value_string();
-*/
+    // Test Value_Node notification
+    void test_value_notification();
 };
 
 class testable_Model_Node : public Model_Node
@@ -102,6 +97,22 @@ void test_Value_Node::test_multiple_callbacks()
     QVERIFY(callback_signal == 6);
 }
 
+void test_Value_Node::test_no_parent()
+{
+    Tree_Model_Node tn{"testtopic", nullptr};
+    const auto n = tn.notification();
+    QVERIFY(n == "testtopic");
+}
+
+void test_Value_Node::test_parent_build_path()
+{
+    Tree_Model_Node root{"root", nullptr};
+    Tree_Model_Node child{"child", &root};
+
+    const auto n = child.notification();
+    QVERIFY2(n == "root/child", ("Got "s+n).c_str() );
+}
+
 void test_Value_Node::test_set_get_value()
 {
     Value_Model<int> n;
@@ -122,7 +133,26 @@ void test_Value_Node::test_value_set_notifies()
 
     QVERIFY(cb_signal != 42);
     n.set(0);
-    QVERIFY(cb_signal == 42);
+    QVERIFY(cb_signal == 42);;
+}
+
+void test_Value_Node::test_value_notification()
+{
+    {
+        Value_Model<int> v{5, "test", nullptr};
+        const auto n = v.notification();
+        QVERIFY2(n == "test 5", ("Got "s+n).c_str() );
+    }
+    {
+        Value_Model<double> v{3.14, "test", nullptr};
+        const auto n = v.notification();
+        QVERIFY2(n == "test 3.14", ("Got "s+n).c_str() );
+    }
+    {
+        Value_Model<std::string> v{"value", "test", nullptr};
+        const auto n = v.notification();
+        QVERIFY2(n == "test value", ("Got "s+n).c_str() );
+    }
 }
 
 QTEST_APPLESS_MAIN(test_Value_Node)
