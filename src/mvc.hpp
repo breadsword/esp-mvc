@@ -14,38 +14,52 @@
 // Better: make notification() something we could put on an iostream.
 
 
-class Model
+class Model_Node
 {
 public:
-    Model(std::string _t= "") : topic{_t}
+    Model_Node(std::string _t= "") : topic{_t}
     {}
-    virtual ~Model(){}
+    virtual ~Model_Node(){}
 
-    typedef std::function<void(const Model&)> callback_t;
+    typedef std::function<void(const Model_Node&)> callback_t;
     void register_change_callback(callback_t);
     void notify_subscribers() const;
 
     virtual std::string notification() const;
-
-protected:
     const std::string topic;
+
     std::vector<callback_t> subscribers;
 };
 
-template <typename T>
-class Value_Model : public Model{
+class Tree_Model_Node : public Model_Node
+{
 public:
-    typedef T value_t;
-    Value_Model(T _value, std::string topic) : Model{topic}, value{_value}
+    Tree_Model_Node(std::string topic = "", Tree_Model_Node *_parent=nullptr) : Model_Node{topic}, parent{_parent}
     {}
 
-    Value_Model() : Model{}, value{}
+    virtual std::string notification() const override;
+
+    constexpr static auto separator = "/";
+    void build_topic(std::ostream&) const;
+
+    Tree_Model_Node* parent;
+};
+
+template <typename T>
+class Value_Model : public Tree_Model_Node{
+public:
+    typedef T value_t;
+    Value_Model(T _value, std::string topic, Tree_Model_Node *parent = nullptr) : Tree_Model_Node{topic, parent}, value{_value}
+    {}
+
+    Value_Model() : Tree_Model_Node{}, value{}
     {}
 
     void set(T);
     T get() const;
 
-    virtual std::string notification() const;
+    virtual std::string notification() const override;
+
 private:
     T value;
 };
@@ -67,7 +81,8 @@ template<typename T>
 std::string Value_Model<T>::notification() const
 {
     std::stringstream s;
-    s << topic << " " << value;
+    build_topic(s);
+    s << " " << value;
     return s.str();
 }
 

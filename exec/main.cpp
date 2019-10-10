@@ -2,13 +2,14 @@
 
 #include <iostream>
 
-static Value_Model<double> temperature{0.0, "temperature"};
-static Value_Model<bool> thermos_output{false, "pin/thermos_output"}, output_enable{true, "pin/output_enable"};
+static Tree_Model_Node root_node{"[Root]", nullptr}, pin_node{"pin", &root_node};
+static Value_Model<double> temperature{0.0, "temperature", &root_node};
+static Value_Model<bool> thermos_output{false, "thermos_output", &pin_node}, output_enable{true, "output_enable", &pin_node};
 
 static bool switch_value = false;
 
 
-void thermos(const Model&)
+void thermos(const Model_Node&)
 {
     const double target = 24.0;
 
@@ -22,12 +23,12 @@ void thermos(const Model&)
     }
 }
 
-void pin(const Model&)
+void pin(const Model_Node&)
 {
     switch_value = thermos_output.get() && output_enable.get();
 }
 
-void reporting_viewer(const Model& m)
+void reporting_viewer(const Model_Node& m)
 {
     std::cout << "Model change: " << m.notification() << std::endl;
 }
@@ -40,7 +41,7 @@ int main(int, char **)
     thermos_output.register_change_callback(pin);
     output_enable.register_change_callback(pin);
 
-    std::vector<std::reference_wrapper<Model> > registry;
+    std::vector<std::reference_wrapper<Model_Node> > registry;
     registry.push_back(temperature);
     registry.push_back(thermos_output);
     registry.push_back(output_enable);

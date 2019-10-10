@@ -23,7 +23,7 @@ private:
 
 struct Counting_Callback
 {
-    void operator()(const Model&)
+    void operator()(const Model_Node&)
     {
         ++call_counter;
     }
@@ -38,7 +38,7 @@ struct Counting_Callback
 
 void test_Value_Node::test_callback_object()
 {
-    Model n;
+    Model_Node n;
     Counting_Callback callback_by_reference, callback_by_value;
 
     // This demonstrates how to pass a function object as callback and let the members stay accessible
@@ -53,11 +53,11 @@ void test_Value_Node::test_callback_object()
 
 void test_Value_Node::test_callback_lambda()
 {
-    Model n;
+    Model_Node n;
     int call_counter = 0;
 
     // This shows how to register a lambda as callback
-    n.register_change_callback([&call_counter](const Model&){++call_counter;});
+    n.register_change_callback([&call_counter](const Model_Node&){++call_counter;});
 
     QVERIFY(call_counter == 0);
     n.notify_subscribers();
@@ -66,14 +66,14 @@ void test_Value_Node::test_callback_lambda()
 
 void test_Value_Node::test_multiple_callbacks()
 {
-    Model n;
+    Model_Node n;
     int callback_signal = 0;
 
-    n.register_change_callback([&callback_signal](const Model&){callback_signal = 5;});
+    n.register_change_callback([&callback_signal](const Model_Node&){callback_signal = 5;});
     n.notify_subscribers();
     QVERIFY(callback_signal == 5);
 
-    n.register_change_callback([&callback_signal](const Model&){++callback_signal;});
+    n.register_change_callback([&callback_signal](const Model_Node&){++callback_signal;});
     n.notify_subscribers();
     QVERIFY(callback_signal == 6);
 }
@@ -94,7 +94,7 @@ void test_Value_Node::test_value_set_notifies()
 {
     Value_Model<int> n;
     int cb_signal = -1;
-    n.register_change_callback([&cb_signal](const Model&){cb_signal = 42;});
+    n.register_change_callback([&cb_signal](const Model_Node&){cb_signal = 42;});
 
     QVERIFY(cb_signal != 42);
     n.set(0);
