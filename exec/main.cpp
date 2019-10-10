@@ -7,7 +7,8 @@ static Value_Model<bool> thermos_output{false, "pin/thermos_output"}, output_ena
 
 static bool switch_value = false;
 
-void thermos()
+
+void thermos(const Model&)
 {
     const double target = 24.0;
 
@@ -21,9 +22,14 @@ void thermos()
     }
 }
 
-void pin()
+void pin(const Model&)
 {
     switch_value = thermos_output.get() && output_enable.get();
+}
+
+void reporting_viewer(const Model& m)
+{
+    std::cout << "Model change: " << m.notification() << std::endl;
 }
 
 
@@ -34,10 +40,21 @@ int main(int, char **)
     thermos_output.register_change_callback(pin);
     output_enable.register_change_callback(pin);
 
+    std::vector<std::reference_wrapper<Model> > registry;
+    registry.push_back(temperature);
+    registry.push_back(thermos_output);
+    registry.push_back(output_enable);
+
+    for (auto m : registry)
+    {
+        m.get().register_change_callback(reporting_viewer);
+    }
+
+
     std::cout << std::boolalpha << switch_value << " expected: " << "false" << std::endl;
     temperature.set(32.0);
     std::cout << std::boolalpha << switch_value << " expected: " << "false" << std::endl;
-    temperature.set(22.0);
+    temperature.set(22.4);
     std::cout << std::boolalpha << switch_value << " expected: " << "true" << std::endl;
     output_enable.set(false);
     std::cout << std::boolalpha << switch_value << " expected: " << "false" << std::endl;
