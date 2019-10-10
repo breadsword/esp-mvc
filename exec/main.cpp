@@ -2,16 +2,16 @@
 
 #include <iostream>
 
-static Tree_Model_Node root_node{"[Root]", nullptr}, pin_node{"pin", &root_node};
-static Value_Model<double> temperature{0.0, "temperature", &root_node};
+static Tree_Model_Node root_node{"wemos", nullptr}, pin_node{"pin", &root_node};
+static Value_Model<float> temperature{0.0, "temperature", &root_node};
 static Value_Model<bool> thermos_output{false, "thermos_output", &pin_node}, output_enable{true, "output_enable", &pin_node};
 
-static bool switch_value = false;
+static Value_Model<bool> switch_value{false, "switch", &pin_node};
 
 
 void thermos(const Model_Node&)
 {
-    const double target = 24.0;
+    const auto target = 24.0f;
 
     if (temperature.get() < target)
     {
@@ -25,7 +25,7 @@ void thermos(const Model_Node&)
 
 void pin(const Model_Node&)
 {
-    switch_value = thermos_output.get() && output_enable.get();
+    switch_value.set(thermos_output.get() && output_enable.get());
 }
 
 void reporting_viewer(const Model_Node& m)
@@ -36,33 +36,33 @@ void reporting_viewer(const Model_Node& m)
 
 int main(int, char **)
 {
-    temperature.register_change_callback(thermos);
-
-    thermos_output.register_change_callback(pin);
-    output_enable.register_change_callback(pin);
 
     std::vector<std::reference_wrapper<Model_Node> > registry;
     registry.push_back(temperature);
     registry.push_back(thermos_output);
     registry.push_back(output_enable);
+    registry.push_back(switch_value);
 
     for (auto m : registry)
     {
         m.get().register_change_callback(reporting_viewer);
     }
 
+    temperature.register_change_callback(thermos);
+    thermos_output.register_change_callback(pin);
+    output_enable.register_change_callback(pin);
 
-    std::cout << std::boolalpha << switch_value << " expected: " << "false" << std::endl;
+    std::cout << std::boolalpha << switch_value.get() << " expected: " << "false" << std::endl;
     temperature.set(32.0);
-    std::cout << std::boolalpha << switch_value << " expected: " << "false" << std::endl;
-    temperature.set(22.4);
-    std::cout << std::boolalpha << switch_value << " expected: " << "true" << std::endl;
+    std::cout << std::boolalpha << switch_value.get() << " expected: " << "false" << std::endl;
+    temperature.set(22.4F);
+    std::cout << std::boolalpha << switch_value.get() << " expected: " << "true" << std::endl;
     output_enable.set(false);
-    std::cout << std::boolalpha << switch_value << " expected: " << "false" << std::endl;
+    std::cout << std::boolalpha << switch_value.get() << " expected: " << "false" << std::endl;
     temperature.set(20.0);
-    std::cout << std::boolalpha << switch_value << " expected: " << "false" << std::endl;
+    std::cout << std::boolalpha << switch_value.get() << " expected: " << "false" << std::endl;
     output_enable.set(true);
-    std::cout << std::boolalpha << switch_value << " expected: " << "true" << std::endl;
+    std::cout << std::boolalpha << switch_value.get() << " expected: " << "true" << std::endl;
 
     return 0;
 }
