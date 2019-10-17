@@ -34,7 +34,7 @@ class testable_Model_Node : public Model_Node
     virtual void build_topic(ostream& s) const override;
 };
 
-void testable_Model_Node::build_topic(Model_Node::ostream&) const
+void testable_Model_Node::build_topic(ostream&) const
 {
 }
 
@@ -133,7 +133,7 @@ void test_Value_Node::test_value_set_notifies()
 
     QVERIFY(cb_signal != 42);
     n.set(0);
-    QVERIFY(cb_signal == 42);;
+    QVERIFY(cb_signal == 42);
 }
 
 void test_Value_Node::test_value_notification()

@@ -7,15 +7,16 @@
 
 #include <sstream>
 
+#include "types.hpp"
+
 // TODO: make notification() something we could put on an iostream as in
 // std::cout << m.notification()
+// and perform the output using expression templates
 
 
 class Model_Node
 {
 public:
-    typedef std::string string;
-
     Model_Node()
     {}
     virtual ~Model_Node(){}
@@ -53,7 +54,7 @@ template <typename T>
 class Value_Model : public Tree_Model_Node{
 public:
     typedef T value_t;
-    Value_Model(T _value, string topic, Tree_Model_Node *parent = nullptr) : Tree_Model_Node{topic, parent}, value{_value}
+    Value_Model(T _value, string _topic, Tree_Model_Node *_parent = nullptr) : Tree_Model_Node{_topic, _parent}, value{_value}
     {}
 
     Value_Model() : Tree_Model_Node{}, value{}

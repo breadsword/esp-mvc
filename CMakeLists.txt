@@ -8,6 +8,9 @@ INCLUDE_DIRECTORIES(${CURRENT_SOURCE_PATH})
 LIST(APPEND LIB_SOURCES
     src/mvc.hpp
     src/mvc.cpp
+    src/fbstream.hpp
+    src/fbstream.cpp
+    src/types.hpp
     )
 
 LIST(APPEND EXEC_SOURCES
@@ -24,10 +27,12 @@ TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${LIBRARY_NAME})
 
 LIST( APPEND TESTSOURCES
     test/test_mvc
+    test/test_fixedbufstream
     )
 
 find_package(Qt5 COMPONENTS Test REQUIRED
     HINTS /usr/local/opt/qt5/lib/cmake/Qt5
+    HINTS /Users/ap/Qt/5.12.5/clang_64/lib/cmake/Qt5
     )
 
 SET(CMAKE_AUTOMOC ON)
