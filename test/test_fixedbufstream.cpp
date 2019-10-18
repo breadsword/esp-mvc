@@ -6,12 +6,12 @@
 #include <boost/format.hpp>
 using boost::format;
 
-class test_ostream : public QObject
+class test_fixedbufstream : public QObject
 {
     Q_OBJECT
 public:
-    test_ostream(){}
-    ~test_ostream(){}
+    test_fixedbufstream(){}
+    ~test_fixedbufstream(){}
 
 private slots:
     void test_free_bytes();
@@ -21,7 +21,7 @@ private slots:
 };
 
 
-void test_ostream::test_free_bytes()
+void test_fixedbufstream::test_free_bytes()
 {
     fixedbufstream<128> fbs;
 
@@ -31,7 +31,7 @@ void test_ostream::test_free_bytes()
     QVERIFY2(fbs.free_bytes()==127, (format("Got: %1%")%fbs.free_bytes()).str().c_str());
 }
 
-void test_ostream::test_put_string()
+void test_fixedbufstream::test_put_string()
 {
     fixedbufstream<1024> fbs;
 
@@ -42,7 +42,7 @@ void test_ostream::test_put_string()
 
 }
 
-void test_ostream::test_isfull()
+void test_fixedbufstream::test_isfull()
 {
     fixedbufstream<4> fbs;
     QVERIFY(fbs);
@@ -55,6 +55,6 @@ void test_ostream::test_isfull()
     QVERIFY2(res == std::string("1234"), (std::string("Got: '") + res + "'").c_str());
 }
 
-QTEST_APPLESS_MAIN(test_ostream)
+QTEST_APPLESS_MAIN(test_fixedbufstream)
 
 #include "test_fixedbufstream.moc"
