@@ -63,10 +63,13 @@ void fixedbufstream<S>::putc(char c)
     }
 }
 
-template <typename T>
-basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, const T& data);
+//template <typename T>
+//basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, const T& data);
 
 basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, const char *data);
 basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, const std::string& data);
+basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, int data);
+basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, double data);
+
 
 #endif //FBSTREAM_HPP_INCLUDED
