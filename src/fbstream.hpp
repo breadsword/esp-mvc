@@ -10,21 +10,18 @@ class basic_fixedbufstream
 {
 public:
     virtual ~basic_fixedbufstream() = default;
-    virtual size_t free_bytes() const = 0;
-    virtual string str() = 0;
     virtual void putc(char c) = 0;
-    virtual explicit operator bool() const = 0;
 };
 
 template <size_t S>
 class fixedbufstream : public basic_fixedbufstream
 {
 public:
-    virtual size_t free_bytes() const override;
-    virtual string str() override;
+    size_t free_bytes() const ;
+    string str();
     void putc(char c) override;
 
-    virtual explicit operator bool() const override
+    explicit operator bool() const
     {
         return !isfull;
     }
