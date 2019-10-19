@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-#include <sstream>
+#include "fbstream.hpp"
 
 #include "types.hpp"
 
@@ -30,7 +30,7 @@ public:
     std::vector<callback_t> subscribers;
 
 protected:
-    typedef std::ostream ostream;
+    typedef fixedbufstream<64> ostream;
     // make these function protected to allow changing the std::ostream interface
     virtual void build_topic(ostream&) const = 0;
     virtual void add_value_string(ostream&) const;

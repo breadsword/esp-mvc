@@ -15,7 +15,7 @@ void Model_Node::notify_subscribers() const
 
 string Model_Node::notification() const
 {
-    std::stringstream s;
+    ostream s;
     build_topic(s);
     add_value_string(s);
 
