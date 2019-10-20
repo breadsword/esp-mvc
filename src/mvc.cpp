@@ -1,4 +1,5 @@
 #include "mvc.hpp"
+#include <utility>
 
 void Model_Node::register_change_callback(callback_t cb)
 {
@@ -19,7 +20,7 @@ std::pair<string, string> Model_Node::notification() const
     build_topic(topic);
     add_value_string(value);
 
-    return make_pair(topic.str(), value.str());
+    return std::make_pair(topic.str(), value.str());
 }
 
 void Model_Node::add_value_string(ostream &) const
