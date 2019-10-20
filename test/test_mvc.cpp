@@ -2,6 +2,9 @@
 
 #include "mvc.hpp"
 
+#include <boost/format.hpp>
+using boost::format;
+
 using namespace std::string_literals;
 
 class test_Value_Node : public QObject
@@ -27,6 +30,7 @@ private slots:
 
     // Test Value_Node notification
     void test_value_notification();
+    void test_bool_value_notification();
 };
 
 class testable_Model_Node : public Model_Node
@@ -153,6 +157,18 @@ void test_Value_Node::test_value_notification()
         const auto n = v.notification();
         QVERIFY2(n == "test value", ("Got "s+n).c_str() );
     }
+}
+
+void test_Value_Node::test_bool_value_notification()
+{
+    Value_Model<bool> b{false, "bool_val", nullptr};
+    b.set(true);
+    const auto b_true = b.notification();
+    QVERIFY2(b_true == "bool_val 1", (format("Got: '%1%'")%b_true).str().c_str());
+
+    b.set(false);
+    const auto b_false = b.notification();
+    QVERIFY2(b_false == "bool_val 0", (format("Got: '%1%'")%b_false).str().c_str());
 }
 
 QTEST_APPLESS_MAIN(test_Value_Node)
