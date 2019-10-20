@@ -1,7 +1,7 @@
 #include "fbstream.hpp"
 
 
-basic_fixedbufstream &operator<<(basic_fixedbufstream &stream, const std::string &data)
+basic_fixedbufstream &operator<<(basic_fixedbufstream &stream, const string &data)
 {
     for (const char c : data)
     {

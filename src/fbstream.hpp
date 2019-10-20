@@ -43,7 +43,10 @@ size_t fixedbufstream<S>::free_bytes() const
 template<size_t S>
 string fixedbufstream<S>::str()
 {
-    return string(&buffer[begin], &buffer[end]);
+    string res;
+    res.reserve(end-begin);
+    std::copy(&buffer[begin], &buffer[end], res.begin());
+    return res;
 }
 
 template<size_t S>
@@ -61,7 +64,7 @@ void fixedbufstream<S>::putc(char c)
 }
 
 basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, const char *data);
-basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, const std::string& data);
+basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, const string& data);
 basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, int data);
 basic_fixedbufstream& operator<<(basic_fixedbufstream& stream, double data);
 
