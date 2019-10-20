@@ -3,10 +3,7 @@
 
 #include <functional>
 #include <vector>
-#include <string>
-
 #include "fbstream.hpp"
-
 #include "types.hpp"
 
 // TODO: make notification() something we could put on an iostream as in
