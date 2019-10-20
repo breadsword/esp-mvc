@@ -23,7 +23,7 @@ public:
     void notify_subscribers() const;
 
     // notification uses algorithm pattern
-    string notification() const;
+    std::pair<string, string> notification() const;
     std::vector<callback_t> subscribers;
 
 protected:
@@ -83,7 +83,7 @@ T Value_Model<T>::get() const
 template<typename T>
 void Value_Model<T>::add_value_string(ostream& s) const
 {
-    s << " " << value;
+    s << value;
 }
 
 #endif //MVC_HPP_INCLUDED

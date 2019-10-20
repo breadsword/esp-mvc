@@ -13,13 +13,13 @@ void Model_Node::notify_subscribers() const
     }
 }
 
-string Model_Node::notification() const
+std::pair<string, string> Model_Node::notification() const
 {
-    ostream s;
-    build_topic(s);
-    add_value_string(s);
+    ostream topic, value;
+    build_topic(topic);
+    add_value_string(value);
 
-    return s.str();
+    return make_pair(topic.str(), value.str());
 }
 
 void Model_Node::add_value_string(ostream &) const

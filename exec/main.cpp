@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-static Tree_Model_Node root_node{"wemos", nullptr}, pin_node{"pin", &root_node};
+static Tree_Model_Node root_node{"brotkiste", nullptr}, pin_node{"pin", &root_node};
 static Value_Model<float> temperature{0.0, "temperature", &root_node};
 static Value_Model<bool> thermos_output{false, "thermos_output", &pin_node}, output_enable{true, "output_enable", &pin_node};
 
@@ -30,7 +30,8 @@ void pin(const Model_Node&)
 
 void reporting_viewer(const Model_Node& m)
 {
-    std::cout << "Model change: " << m.notification() << std::endl;
+    const auto n = m.notification();
+    std::cout << "Model change: " << n.first << ":" << n.second << std::endl;
 }
 
 

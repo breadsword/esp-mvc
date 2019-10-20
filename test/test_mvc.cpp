@@ -105,7 +105,7 @@ void test_Value_Node::test_no_parent()
 {
     Tree_Model_Node tn{"testtopic", nullptr};
     const auto n = tn.notification();
-    QVERIFY(n == "testtopic");
+    QVERIFY(n.first == "testtopic");
 }
 
 void test_Value_Node::test_parent_build_path()
@@ -114,7 +114,7 @@ void test_Value_Node::test_parent_build_path()
     Tree_Model_Node child{"child", &root};
 
     const auto n = child.notification();
-    QVERIFY2(n == "root/child", ("Got "s+n).c_str() );
+    QVERIFY2(n.first == "root/child", ("Got "s+n.first).c_str() );
 }
 
 void test_Value_Node::test_set_get_value()
@@ -145,17 +145,20 @@ void test_Value_Node::test_value_notification()
     {
         Value_Model<int> v{5, "test", nullptr};
         const auto n = v.notification();
-        QVERIFY2(n == "test 5", ("Got "s+n).c_str() );
+        QVERIFY2(n.first == "test", ("Got "s+n.first).c_str() );
+        QVERIFY2(n.second == "5", ("Got "s+n.second).c_str() );
     }
     {
         Value_Model<double> v{3.14, "test", nullptr};
         const auto n = v.notification();
-        QVERIFY2(n == "test 3.14", ("Got "s+n).c_str() );
+        QVERIFY2(n.first == "test", ("Got "s+n.first).c_str() );
+        QVERIFY2(n.second == "3.14", ("Got "s+n.second).c_str() );
     }
     {
         Value_Model<std::string> v{"value", "test", nullptr};
         const auto n = v.notification();
-        QVERIFY2(n == "test value", ("Got "s+n).c_str() );
+        QVERIFY2(n.first == "test", ("Got "s+n.first).c_str() );
+        QVERIFY2(n.second == "value", ("Got "s+n.second).c_str() );
     }
 }
 
@@ -164,11 +167,13 @@ void test_Value_Node::test_bool_value_notification()
     Value_Model<bool> b{false, "bool_val", nullptr};
     b.set(true);
     const auto b_true = b.notification();
-    QVERIFY2(b_true == "bool_val 1", (format("Got: '%1%'")%b_true).str().c_str());
+    QVERIFY2(b_true.first == "bool_val", ("Got "s+b_true.first).c_str() );
+    QVERIFY2(b_true.second == "1", ("Got "s+b_true.second).c_str() );
 
     b.set(false);
     const auto b_false = b.notification();
-    QVERIFY2(b_false == "bool_val 0", (format("Got: '%1%'")%b_false).str().c_str());
+    QVERIFY2(b_false.first == "bool_val", ("Got "s+b_false.first).c_str() );
+    QVERIFY2(b_false.second == "0", ("Got "s+b_false.second).c_str() );
 }
 
 QTEST_APPLESS_MAIN(test_Value_Node)
