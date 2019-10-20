@@ -27,6 +27,13 @@ size_t generate_digits(T data, std::array<char, S>& res)
 {
     constexpr auto base = 10;
     size_t i = 0;
+
+    if (data == 0)
+    {
+        res[i]='0';
+        ++i;
+    }
+
     while(data>0 && i<S)
     {
         const uint8_t digit = (data % base);

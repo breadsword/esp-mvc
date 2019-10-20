@@ -76,6 +76,13 @@ void test_fixedbufstream::test_put_int()
         const auto res = fb.str();
         QVERIFY2(res == "-3", (format("Got: '%1%'")%res).str().c_str());
     }
+
+    {
+        fixedbufstream<16> fb;
+        fb << 0;
+        const auto res = fb.str();
+        QVERIFY2(res == "0", (format("Got: '%1%'")%res).str().c_str());
+    }
 }
 
 void test_fixedbufstream::test_put_float()
