@@ -31,6 +31,9 @@ private slots:
     // Test Value_Node notification
     void test_value_notification();
     void test_bool_value_notification();
+
+    // Test tree enumeration
+    void test_tree_enumeration();
 };
 
 class testable_Model_Node : public Model_Node
@@ -174,6 +177,28 @@ void test_Value_Node::test_bool_value_notification()
     const auto b_false = b.notification();
     QVERIFY2(b_false.first == "bool_val", ("Got "s+b_false.first).c_str() );
     QVERIFY2(b_false.second == "0", ("Got "s+b_false.second).c_str() );
+}
+
+void test_Value_Node::test_tree_enumeration()
+{
+    Tree_Model_Node root {"", nullptr};
+    Tree_Model_Node c1{"c1", &root}, c2{"c2", &root};
+    Tree_Model_Node gc11{"gc11", &c1};
+
+    std::vector<std::reference_wrapper<const Tree_Model_Node>> registry;
+
+    root.on_tree_execute([&registry](const Tree_Model_Node& n){registry.push_back(n);});
+
+    auto it = registry.begin();
+
+    QVERIFY(root == *it);
+    ++it;
+    QVERIFY(c1 == *it);
+    ++it;
+    QVERIFY(gc11 == *it);
+    ++it;
+    QVERIFY(c2 == *it);
+
 }
 
 QTEST_APPLESS_MAIN(test_Value_Node)

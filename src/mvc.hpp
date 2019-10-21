@@ -36,16 +36,22 @@ protected:
 class Tree_Model_Node : public Model_Node
 {
 public:
-    Tree_Model_Node(string _topic = "", Tree_Model_Node *_parent=nullptr) : Model_Node{}, topic{_topic}, parent{_parent}
-    {}
+    Tree_Model_Node(string _topic = "", Tree_Model_Node *_parent=nullptr);
 
     constexpr static auto separator = "/";
     const string topic;
     Tree_Model_Node* parent;
 
+    std::vector<Tree_Model_Node*> children;
+
+    bool operator==(const Tree_Model_Node& rhs) const;
+
+    void on_tree_execute(std::function<void(const Tree_Model_Node&)> f) const;
+
 protected:
     virtual void build_topic(ostream&) const override;
 };
+
 
 template <typename T>
 class Value_Model : public Tree_Model_Node{

@@ -25,6 +25,28 @@ std::pair<string, string> Model_Node::notification() const
 void Model_Node::add_value_string(ostream &) const
 {}
 
+Tree_Model_Node::Tree_Model_Node(string _topic, Tree_Model_Node *_parent) : Model_Node{}, topic{_topic}, parent{_parent}
+{
+    if(parent)
+    {
+        parent->children.push_back(this);
+    }
+}
+
+bool Tree_Model_Node::operator==(const Tree_Model_Node &rhs) const
+{
+    return ((this->topic == rhs.topic) && (this->parent == rhs.parent) && (this->children == rhs.children));
+}
+
+void Tree_Model_Node::on_tree_execute(std::function<void (const Tree_Model_Node &)> f) const
+{
+    f(*this);
+    for (auto c : children)
+    {
+        c->on_tree_execute(f);
+    }
+}
+
 void Tree_Model_Node::build_topic(ostream& s) const
 {
     if (parent != nullptr)
