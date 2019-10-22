@@ -30,13 +30,13 @@ Tree_Model_Node::Tree_Model_Node(string _topic, Tree_Model_Node *_parent) : Mode
 {
     if(parent)
     {
-        parent->children.push_back(this);
+        parent->children.push_back(std::ref(*this));
     }
 }
 
 bool Tree_Model_Node::operator==(const Tree_Model_Node &rhs) const
 {
-    return ((this->topic == rhs.topic) && (this->parent == rhs.parent) && (this->children == rhs.children));
+    return ((this->topic == rhs.topic) && (this->parent == rhs.parent));
 }
 
 void Tree_Model_Node::on_tree_execute(std::function<void (const Tree_Model_Node &)> f) const
@@ -44,7 +44,7 @@ void Tree_Model_Node::on_tree_execute(std::function<void (const Tree_Model_Node 
     f(*this);
     for (auto c : children)
     {
-        c->on_tree_execute(f);
+        c.get().on_tree_execute(f);
     }
 }
 
