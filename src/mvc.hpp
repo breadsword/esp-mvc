@@ -42,7 +42,7 @@ public:
     const string topic;
     Tree_Model_Node* parent;
 
-    std::vector<Tree_Model_Node*> children;
+    std::vector<std::reference_wrapper<Tree_Model_Node> > children;
 
     bool operator==(const Tree_Model_Node& rhs) const;
 
