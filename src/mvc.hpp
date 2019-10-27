@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <vector>
-#include "fbstream.hpp"
+// #include "fbstream.hpp"
 #include "types.hpp"
 
 // TODO: make notification() something we could put on an iostream as in
@@ -23,11 +23,11 @@ public:
     void notify_subscribers() const;
 
     // notification uses algorithm pattern
-    std::pair<string, string> notification() const;
+    std::tuple<string, string> notification() const;
     std::vector<callback_t> subscribers;
 
 protected:
-    typedef fixedbufstream<64> ostream;
+    typedef std::ostringstream ostream;
     // make these function protected to allow changing the std::ostream interface
     virtual void build_topic(ostream &) const = 0;
     virtual void add_value_string(ostream &) const;
@@ -47,6 +47,9 @@ public:
     bool operator==(const Tree_Model_Node &rhs) const;
 
     void on_tree_execute(std::function<void(const Tree_Model_Node &)> f) const;
+
+    Tree_Model_Node *search(string searchtopic);    
+    Tree_Model_Node *search(std::vector<string>::iterator it, std::vector<string>::iterator end);
 
 protected:
     virtual void build_topic(ostream &) const override;
@@ -75,26 +78,8 @@ private:
     T value;
 };
 
-template <typename T>
-void Value_Model<T>::set(T _value)
-{
-    if (_value != value)
-    {
-        value = _value;
-        notify_subscribers();
-    }
-}
+std::vector<string> tokenize(const string path);
 
-template <typename T>
-T Value_Model<T>::get() const
-{
-    return value;
-}
-
-template <typename T>
-void Value_Model<T>::add_value_string(ostream &s) const
-{
-    s << value;
-}
+#include "mvc.tpp"
 
 #endif //MVC_HPP_INCLUDED

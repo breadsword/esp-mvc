@@ -30,8 +30,9 @@ void pin(const Model_Node&)
 
 void reporting_viewer(const Model_Node& m)
 {
-    const auto n = m.notification();
-    std::cout << "Model change: " << n.first << ":" << n.second << std::endl;
+    string t, v;
+    std::tie(t, v) = m.notification();
+    std::cout << "Model change: " << t << ":" << v << std::endl;
 }
 
 
