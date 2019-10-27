@@ -31,9 +31,17 @@ private slots:
     // Test Value_Node notification
     void test_value_notification();
     void test_bool_value_notification();
+    void test_tree_model_no_value_notification();
 
     // Test tree enumeration
     void test_tree_enumeration();
+
+    // Test tree search
+    void test_path_tokenize();
+    void test_tree_search_string();
+
+    // Make search and notification consistent
+    void test_search_notification();
 };
 
 class testable_Model_Node : public Model_Node
@@ -108,7 +116,8 @@ void test_Value_Node::test_no_parent()
 {
     Tree_Model_Node tn{"testtopic", nullptr};
     const auto n = tn.notification();
-    QVERIFY(n.first == "testtopic");
+    const auto res = std::get<0>(n);
+    QVERIFY2(res == "", (format("Got: %1%")%res).str().c_str());
 }
 
 void test_Value_Node::test_parent_build_path()
@@ -117,7 +126,7 @@ void test_Value_Node::test_parent_build_path()
     Tree_Model_Node child{"child", &root};
 
     const auto n = child.notification();
-    QVERIFY2(n.first == "root/child", ("Got "s+n.first).c_str() );
+    QVERIFY2(std::get<0>(n) == "/child", ("Got "s+std::get<0>(n)).c_str() );
 }
 
 void test_Value_Node::test_set_get_value()
@@ -145,38 +154,63 @@ void test_Value_Node::test_value_set_notifies()
 
 void test_Value_Node::test_value_notification()
 {
+    Tree_Model_Node root{"root", nullptr};
     {
-        Value_Model<int> v{5, "test", nullptr};
-        const auto n = v.notification();
-        QVERIFY2(n.first == "test", ("Got "s+n.first).c_str() );
-        QVERIFY2(n.second == "5", ("Got "s+n.second).c_str() );
+        Value_Model<int> v{5, "test", &root};
+        string t, m;
+        std::tie(t, m) = v.notification();
+        QVERIFY2(t == "/test", ("Got "s+t).c_str() );
+        QVERIFY2(m == "5", ("Got "s+m).c_str() );
     }
     {
-        Value_Model<double> v{3.14, "test", nullptr};
+        Value_Model<double> v{3.14, "test", &root};
         const auto n = v.notification();
-        QVERIFY2(n.first == "test", ("Got "s+n.first).c_str() );
-        QVERIFY2(n.second == "3.14", ("Got "s+n.second).c_str() );
+        string t, m;
+        std::tie(t, m) = v.notification();
+        QVERIFY2(t == "/test", ("Got "s+t).c_str() );
+        QVERIFY2(m == "3.14", ("Got "s+m).c_str() );
     }
     {
-        Value_Model<std::string> v{"value", "test", nullptr};
+        Value_Model<std::string> v{"value", "test", &root};
         const auto n = v.notification();
-        QVERIFY2(n.first == "test", ("Got "s+n.first).c_str() );
-        QVERIFY2(n.second == "value", ("Got "s+n.second).c_str() );
+        string t, m;
+        std::tie(t, m) = v.notification();
+        QVERIFY2(t == "/test", ("Got "s+t).c_str() );
+        QVERIFY2(m == "value", ("Got "s+m).c_str() );
     }
 }
 
 void test_Value_Node::test_bool_value_notification()
 {
-    Value_Model<bool> b{false, "bool_val", nullptr};
-    b.set(true);
-    const auto b_true = b.notification();
-    QVERIFY2(b_true.first == "bool_val", ("Got "s+b_true.first).c_str() );
-    QVERIFY2(b_true.second == "1", ("Got "s+b_true.second).c_str() );
+    Tree_Model_Node root{"root", nullptr};
+    Value_Model<bool> b{false, "bool_val", &root};
+    {
+        b.set(true);
+        string t, m;
+        std::tie(t, m) = b.notification();
+        QVERIFY2(t == "/bool_val", ("Got "s+t).c_str() );
+        QVERIFY2(m == "1", ("Got "s+m).c_str() );
+    }
+    {
+        b.set(false);
+        const auto b_false = b.notification();
+        string t, m;
+        std::tie(t, m) = b.notification();
+        QVERIFY2(t == "/bool_val", ("Got "s+t).c_str() );
+        QVERIFY2(m == "0", ("Got "s+m).c_str() );
+    }
+}
 
-    b.set(false);
-    const auto b_false = b.notification();
-    QVERIFY2(b_false.first == "bool_val", ("Got "s+b_false.first).c_str() );
-    QVERIFY2(b_false.second == "0", ("Got "s+b_false.second).c_str() );
+void test_Value_Node::test_tree_model_no_value_notification()
+{
+    Tree_Model_Node root{"root", nullptr};
+    Tree_Model_Node test{"test", &root};
+
+    string t, m;
+    std::tie(t, m) = test.notification();
+    QVERIFY2(t == "/test", ("Got "s+t).c_str() );
+    QVERIFY2(m == "", ("Got "s+m).c_str() );
+
 }
 
 void test_Value_Node::test_tree_enumeration()
@@ -198,8 +232,85 @@ void test_Value_Node::test_tree_enumeration()
     QVERIFY(gc11 == *it);
     ++it;
     QVERIFY(c2 == *it);
+}
+
+void test_Value_Node::test_path_tokenize()
+{
+    {
+        const auto tokens = tokenize("");
+        QVERIFY(tokens.empty());
+    }
+
+    {
+        const auto tokens = tokenize("/");
+        QVERIFY(tokens.empty());
+    }
+
+    {
+        const auto tokens = tokenize("root");
+        QVERIFY2(tokens.size() == 1, (format("Got: %1%")%tokens.size()).str().c_str());
+        QVERIFY2(tokens[0]=="root", (format("Got: %1%")%tokens[0]).str().c_str());
+    }
+
+    {
+        const auto tokens = tokenize("/root");
+        QVERIFY2(tokens.size() == 1, (format("Got: %1%")%tokens.size()).str().c_str());
+        QVERIFY2(tokens[0]=="root", (format("Got: %1%")%tokens[0]).str().c_str());
+    }
+
+    {
+        const auto tokens = tokenize("/root/");
+        QVERIFY2(tokens.size() == 1, (format("Got: %1%")%tokens.size()).str().c_str());
+        QVERIFY2(tokens[0]=="root", (format("Got: %1%")%tokens[0]).str().c_str());
+    }
+
+    {
+        const auto tokens = tokenize("root/1/2/3/");
+        QVERIFY2(tokens[0]=="root", (format("Got: %1%")%tokens[0]).str().c_str());
+        QVERIFY2(tokens.size() == 4, (format("Got: %1%")%tokens.size()).str().c_str());
+        QVERIFY2(tokens[1]=="1", (format("Got: %1%")%tokens[1]).str().c_str());
+        QVERIFY2(tokens[2]=="2", (format("Got: %1%")%tokens[2]).str().c_str());
+        QVERIFY2(tokens[3]=="3", (format("Got: %1%")%tokens[3]).str().c_str());
+    }
+}
+
+void test_Value_Node::test_tree_search_string()
+{
+    Tree_Model_Node root {"root", nullptr};
+    Tree_Model_Node c1{"c1", &root}, c2{"c2", &root};
+    Tree_Model_Node gc11{"gc11", &c1};
+
+//    QFAIL("Not implemented.");
+    {
+        std::vector<string> tokens {"c1"};
+        const auto node = root.search(tokens.begin(), tokens.end());
+        QVERIFY(node != nullptr);
+        QVERIFY(*node == c1);
+    }
+
+    {
+        const auto node = root.search("/c1/gc11");
+        QVERIFY(node);
+        QVERIFY(*node == gc11);
+    }
+}
+
+void test_Value_Node::test_search_notification()
+{
+    Tree_Model_Node root {"root", nullptr};
+    Tree_Model_Node c1{"c1", &root};
+
+    const string search_string = "/c1";
+    const auto node = root.search(search_string);
+    QVERIFY(node);
+
+    const auto n = node->notification();
+    string topic = std::get<0>(n);
+    QVERIFY2(topic == search_string, (format("Topic: %1%, search_str: %2%")%topic%search_string).str().c_str());
 
 }
+
+
 
 QTEST_APPLESS_MAIN(test_Value_Node)
 
