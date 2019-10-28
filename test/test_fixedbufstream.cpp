@@ -37,10 +37,10 @@ void test_fixedbufstream::test_put_string()
 {
     fixedbufstream<1024> fbs;
 
-    fbs << std::string("Test string");
+    fbs << string("Test string");
 
     const auto res = fbs.str();
-    QVERIFY2(res == std::string("Test string"), (std::string("Got: '") + res + "'").c_str());
+    QVERIFY2(res == string{"Test string"}, (std::string("Got: '") + res + "'").c_str());
 
 }
 
