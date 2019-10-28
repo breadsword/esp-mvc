@@ -43,8 +43,9 @@ size_t fixedbufstream<S>::free_bytes() const
 template<size_t S>
 string fixedbufstream<S>::str()
 {
+
     string res;
-    res.reserve(end-begin);
+    res.resize(end-begin);
     std::copy(&buffer[begin], &buffer[end], res.begin());
     return res;
 
