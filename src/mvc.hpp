@@ -42,11 +42,12 @@ public:
     const string topic;
     Tree_Model_Node *parent;
 
-    std::vector<std::reference_wrapper<Tree_Model_Node>> children;
+    typedef std::vector<std::reference_wrapper<Tree_Model_Node>> children_t;
+    children_t children;
 
     bool operator==(const Tree_Model_Node &rhs) const;
 
-    void on_tree_execute(std::function<void(const Tree_Model_Node &)> f) const;
+    void on_tree_execute(std::function<void(Tree_Model_Node &)> f);
 
     Tree_Model_Node *search(string searchtopic);    
     Tree_Model_Node *search(std::vector<string>::iterator it, std::vector<string>::iterator end);

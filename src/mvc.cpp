@@ -43,7 +43,7 @@ bool Tree_Model_Node::operator==(const Tree_Model_Node &rhs) const
     return ((this->topic == rhs.topic) && (this->parent == rhs.parent));
 }
 
-void Tree_Model_Node::on_tree_execute(std::function<void (const Tree_Model_Node &)> f) const
+void Tree_Model_Node::on_tree_execute(std::function<void (Tree_Model_Node &)> f)
 {
     f(*this);
     for (auto c : children)
@@ -94,7 +94,7 @@ Tree_Model_Node *Tree_Model_Node::search(std::vector<string>::iterator it, std::
     }
 
     const string child_topic = *it;
-    auto child = std::find_if(children.begin(), children.end(), [&child_topic](auto c_it){return c_it.get().topic == child_topic;});
+    auto child = std::find_if(children.begin(), children.end(), [&child_topic](children_t::value_type c_it){return c_it.get().topic == child_topic;});
     if (child != children.end())
     {
         return child->get().search(++it, end);
