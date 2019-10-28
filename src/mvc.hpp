@@ -52,6 +52,8 @@ public:
     Tree_Model_Node *search(string searchtopic);    
     Tree_Model_Node *search(std::vector<string>::iterator it, std::vector<string>::iterator end);
 
+    virtual void set_from(const string&){}
+
 protected:
     virtual void build_topic(ostream &) const override;
 };
@@ -69,7 +71,7 @@ public:
     {
     }
 
-    void set_from(const string&);
+    virtual void set_from(const string&) override;
     void set(T);
     T get() const;
 

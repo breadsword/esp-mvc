@@ -40,6 +40,7 @@ private slots:
     // Test tree search
     void test_path_tokenize();
     void test_tree_search_string();
+    void test_tree_search_set();
 
     // Make search and notification consistent
     void test_search_notification();
@@ -145,9 +146,9 @@ void test_Value_Node::test_set_get_value()
 void test_Value_Node::test_set_with_string()
 {
     {
-    Value_Model<float> f;
-    f.set_from("3.14");
-    QVERIFY2(fabs(f.get()-3.14F)<1e-8, (format("Got: %1%")%(3.14F-f.get())).str().c_str());
+        Value_Model<float> f;
+        f.set_from("3.14");
+        QVERIFY2(fabs(f.get()-3.14F)<1e-8, (format("Got: %1%")%(3.14F-f.get())).str().c_str());
     }
 
     {
@@ -308,7 +309,7 @@ void test_Value_Node::test_tree_search_string()
     Tree_Model_Node c1{"c1", &root}, c2{"c2", &root};
     Tree_Model_Node gc11{"gc11", &c1};
 
-//    QFAIL("Not implemented.");
+    //    QFAIL("Not implemented.");
     {
         std::vector<string> tokens {"c1"};
         const auto node = root.search(tokens.begin(), tokens.end());
@@ -321,6 +322,24 @@ void test_Value_Node::test_tree_search_string()
         QVERIFY(node);
         QVERIFY(*node == gc11);
     }
+}
+
+void test_Value_Node::test_tree_search_set()
+{
+    Tree_Model_Node root{"", nullptr};
+    Value_Model<int> v{5, "t", &root};
+
+    auto node = root.search("/t");
+    QVERIFY(node);
+
+    Value_Model<int> *n = dynamic_cast<Value_Model<int> *>(node);
+    QVERIFY(n);
+    int val = n->get();
+    QVERIFY(val == 5);
+
+    node->set_from("17");
+    QVERIFY(n->get() == 17);
+
 }
 
 void test_Value_Node::test_search_notification()
