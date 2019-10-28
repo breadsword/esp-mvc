@@ -26,6 +26,7 @@ private slots:
 
     // Test Value_Node value storage
     void test_set_get_value();
+    void test_set_with_string();
     void test_value_set_notifies();
 
     // Test Value_Node notification
@@ -139,6 +140,33 @@ void test_Value_Node::test_set_get_value()
 
     n.set(v+1);
     QVERIFY(n.get() == v+1);
+}
+
+void test_Value_Node::test_set_with_string()
+{
+    {
+    Value_Model<float> f;
+    f.set_from("3.14");
+    QVERIFY2(fabs(f.get()-3.14F)<1e-8, (format("Got: %1%")%(3.14F-f.get())).str().c_str());
+    }
+
+    {
+        Value_Model<double> d;
+        d.set_from("3.141");
+        QVERIFY2(fabs(d.get()-3.141)<1e-8, (format("Got: %1%")%(3.141-d.get())).str().c_str());
+    }
+
+    {
+        Value_Model<int> i;
+        i.set_from("55");
+        QVERIFY2(i.get() == 55, (format("Got: %1%")%i.get()).str().c_str());
+    }
+
+    {
+        Value_Model<string> s;
+        s.set_from("lala");
+        QVERIFY2(s.get() == "lala", (format("Got: %1%")%s.get()).str().c_str());
+    }
 }
 
 void test_Value_Node::test_value_set_notifies()
