@@ -5,6 +5,7 @@
 #include <vector>
 // #include "fbstream.hpp"
 #include "types.hpp"
+#include <sstream>
 
 // TODO: make notification() something we could put on an iostream as in
 // std::cout << m.notification()
@@ -68,6 +69,7 @@ public:
     {
     }
 
+    void set_from(const string&);
     void set(T);
     T get() const;
 
@@ -79,6 +81,13 @@ private:
 };
 
 std::vector<string> tokenize(const string path);
+
+template<typename T>
+void Value_Model<T>::set_from(const string& s)
+{
+    std::istringstream iss{s};
+    iss >> value;
+}
 
 #include "mvc.tpp"
 
