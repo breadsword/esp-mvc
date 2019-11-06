@@ -4,6 +4,7 @@
 #include <tuple>
 
 #include <sstream>
+#include <algorithm>
 
 void Model_Node::register_change_callback(callback_t cb)
 {
