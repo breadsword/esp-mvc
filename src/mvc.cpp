@@ -113,3 +113,25 @@ void Tree_Model_Node::build_topic(ostream& s) const
         s << topic;
     }
 }
+
+template<>
+void Value_Model<int>::set_from(const string& s)
+{
+    char *end = nullptr;
+    auto val = strtol(s.c_str(), &end, 10);
+    if (end)
+    {
+        value = val;
+    }
+}
+
+template<>
+void Value_Model<double>::set_from(const string& s)
+{
+    char *end = nullptr;
+    auto val = strtod(s.c_str(), &end);
+    if (end)
+    {
+        value = val;
+    }
+}
