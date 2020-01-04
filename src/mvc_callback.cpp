@@ -1,16 +1,16 @@
 #include <PubSubClient.h>
 
 #include "mvc_callback.hpp"
-
+#include "mvc_callback_impl.hpp"
 #include <mvc.hpp>
+#include "parse_topic.hpp"
 
 string make_string(const uint8_t *data, unsigned int len)
 {
-    return string{data, data+len};
+    return string{data, data + len};
 }
 
-
-auto get_callback(Client &client, Tree_Model_Node& root)
+auto get_callback(PubSubClient &client, Tree_Model_Node &root)
 {
     return [&client, &root](char *topic, uint8_t *payload, unsigned int payload_len) {
         auto sender = topic_sender(client, string{topic});
@@ -36,10 +36,3 @@ auto get_callback(Client &client, Tree_Model_Node& root)
     };
 }
 
-string parse_topic(const string& topic)
-{
-    return string{topic};
-}
-
-topic_sender::topic_sender(Client &_client, string in_topic) : client(_client), m_endpoint(parse_topic(in_topic))
-{}

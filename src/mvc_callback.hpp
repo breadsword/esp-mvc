@@ -12,24 +12,27 @@
 
 
 //FIXME: someone needs to pass the host information to topic_sender
-//TODO: make topic_sender take different Clients
-class Client;
+class PubSubClient;
 class Tree_Model_Node;
 
-auto get_callback(Client &client, Tree_Model_Node& root);
-class topic_sender
+auto get_callback(PubSubClient &client, Tree_Model_Node& root);
+
+template <class client>
+class generic_topic_sender
 {
     public:
-    topic_sender(Client &_client, string in_topic);
+    generic_topic_sender(client &_client, string in_topic);
     
     void output(const char* message);
     void status(const char* message);
-    string endpoint() const;
+    string endpoint() const {return m_endpoint;}
 
     private:
-    Client &client;
+    client &m_client;
     string m_endpoint;
+    string m_host = "none";
 };
 
+typedef generic_topic_sender<PubSubClient> topic_sender;
 
 #endif //MVC_CALLBACK_HPP_INCLUDED
