@@ -10,10 +10,10 @@ string make_string(const uint8_t *data, unsigned int len)
     return string{data, data + len};
 }
 
-auto get_callback(PubSubClient &client, Tree_Model_Node &root)
+auto get_callback(PubSubClient &client, string host, Tree_Model_Node &root)
 {
-    return [&client, &root](char *topic, uint8_t *payload, unsigned int payload_len) {
-        auto sender = topic_sender(client, string{topic});
+    return [&client, &host, &root](char *topic, uint8_t *payload, unsigned int payload_len) {
+        auto sender = topic_sender(client, host, string{topic});
 
         // look up topic
         const auto node = root.search(sender.endpoint());

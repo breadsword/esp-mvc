@@ -15,13 +15,13 @@
 class PubSubClient;
 class Tree_Model_Node;
 
-auto get_callback(PubSubClient &client, Tree_Model_Node& root);
+auto get_callback(PubSubClient &client, string host, Tree_Model_Node& root);
 
 template <class client>
 class generic_topic_sender
 {
     public:
-    generic_topic_sender(client &_client, string in_topic);
+    generic_topic_sender(client &_client, string host, string in_topic);
     
     void output(const char* message);
     void status(const char* message);
