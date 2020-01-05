@@ -22,8 +22,10 @@ string parse_topic(const string &topic)
     auto end = next_token(begin, std::end(topic));
     if (end == std::end(topic))
     {
-        throw (topic_parse_error{"no Host part found"});
+        return "";
+        //throw (topic_parse_error{"no Host part found"});
     }
+
     const string host{begin, end};
 
 
@@ -31,14 +33,16 @@ string parse_topic(const string &topic)
     end = next_token(begin, std::end(topic));
     if (end == std::end(topic))
     {
-        throw (topic_parse_error{"no Dir part found"});
+        return "";
+        // throw (topic_parse_error{"no Dir part found"});
     }
     const string dir{begin, end};
 
     begin = end+1;
     if (begin == std::end(topic))
     {
-        throw(topic_parse_error{"no topic fonud"});
+        return "";
+        // throw(topic_parse_error{"no topic fonud"});
     }
 
     return string{begin, std::end(topic)};
