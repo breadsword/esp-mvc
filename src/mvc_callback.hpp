@@ -13,9 +13,6 @@
 class PubSubClient;
 class Tree_Model_Node;
 
-template <class client_t>
-auto get_callback(client_t &client, string host, Tree_Model_Node &root);
-
 template <class client>
 class generic_topic_sender
 {

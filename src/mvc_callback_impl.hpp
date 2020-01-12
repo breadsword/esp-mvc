@@ -20,33 +20,6 @@ void generic_topic_sender<client>::status(const char *message)
 string make_string(const uint8_t *data, unsigned int len);
 
 template <class client_t>
-auto get_callback(client_t &client, string host, Tree_Model_Node &root)
-{
-    return [&client, &host, &root](char *topic, uint8_t *payload, unsigned int payload_len) {
-        auto sender = generic_topic_sender<client_t>(client, host, string{topic});
-
-        // look up topic
-        const auto node = root.search(sender.endpoint());
-
-        if (!node)
-        {
-            // topic not found
-            sender.status("Requested topic not found");
-        }
-
-        // check, if value is set
-        if (payload_len > 0)
-        {
-            node->set_from(make_string(payload, payload_len));
-        }
-        else
-        {
-            node->notify_subscribers();
-        }
-    };
-}
-
-template <class client_t>
 void mqtt_callback<client_t>::operator()(const char *topic, const uint8_t *payload, unsigned int payload_len)
 {
     auto sender = create_sender(string{topic});
