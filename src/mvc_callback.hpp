@@ -10,7 +10,6 @@
 // DIR being one of i (input), o (output), e (error/status message)
 // and ENDPOINT a path to the actual value in the status tree
 
-//FIXME: someone needs to pass the host information to topic_sender
 class PubSubClient;
 class Tree_Model_Node;
 
@@ -33,5 +32,28 @@ private:
 };
 
 typedef generic_topic_sender<PubSubClient> topic_sender;
+
+template <class client_t>
+class mqtt_callback
+{
+public:
+    mqtt_callback(client_t &_client, string _host, Tree_Model_Node &_root) : client(_client), host(_host), root(_root)
+    {
+    }
+
+    // separate functions to allow testing
+    generic_topic_sender<client_t> create_sender(string topic);
+    Tree_Model_Node *lookup_node(string endpoint);
+    void set_value(Tree_Model_Node &node, string new_val);
+    void notify(Tree_Model_Node &node);
+
+    void
+    operator()(const char *topic, const uint8_t *payload, unsigned int payload_len);
+
+private:
+    client_t &client;
+    string host;
+    Tree_Model_Node &root;
+};
 
 #endif //MVC_CALLBACK_HPP_INCLUDED

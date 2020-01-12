@@ -23,7 +23,7 @@ template <class client_t>
 auto get_callback(client_t &client, string host, Tree_Model_Node &root)
 {
     return [&client, &host, &root](char *topic, uint8_t *payload, unsigned int payload_len) {
-        auto sender = topic_sender(client, host, string{topic});
+        auto sender = generic_topic_sender<client_t>(client, host, string{topic});
 
         // look up topic
         const auto node = root.search(sender.endpoint());
@@ -44,6 +44,53 @@ auto get_callback(client_t &client, string host, Tree_Model_Node &root)
             node->notify_subscribers();
         }
     };
+}
+
+template <class client_t>
+void mqtt_callback<client_t>::operator()(const char *topic, const uint8_t *payload, unsigned int payload_len)
+{
+    auto sender = create_sender(string{topic});
+    auto node = lookup_node(sender.endpoint());
+
+    if (!node)
+    {
+        sender.status("Topic not found");
+        return;
+    }
+
+    if (payload_len > 0)
+    {
+        set_value(*node, make_string(payload, payload_len));
+    }
+    else
+    {
+        notify(*node);
+    }
+}
+
+template <class client_t>
+generic_topic_sender<client_t> mqtt_callback<client_t>::create_sender(string topic)
+{
+    return generic_topic_sender<client_t>(client, host, topic);
+}
+
+template <class client_t>
+Tree_Model_Node *mqtt_callback<client_t>::lookup_node(string endpoint)
+{
+    // look up topic
+    return root.search(endpoint);
+}
+
+template <class client_t>
+void mqtt_callback<client_t>::set_value(Tree_Model_Node &node, string new_val)
+{
+    node.set_from(new_val);
+}
+
+template <class client_t>
+void mqtt_callback<client_t>::notify(Tree_Model_Node &node)
+{
+    node.notify_subscribers();
 }
 
 #endif //MVC_CALLBACK_IMPL_INCLUDED
