@@ -2,6 +2,7 @@
 #define MVC_CALLBACK_HPP_INCLUDED
 
 #include <types.hpp>
+#include <named_type.hpp>
 
 // MQTT topics consist of three parts:
 // [HOST]/[DIR]/[ENDPOINT]
@@ -13,13 +14,18 @@
 class PubSubClient;
 class Tree_Model_Node;
 
+using full_topic_t = NamedType<string, struct FullTopic>;
+using endpoint_t = NamedType<string, struct EndpointTopic>;
+
 template <class client>
 class generic_topic_sender
 {
 public:
-    generic_topic_sender(client &_client, string host, string in_topic);
+    generic_topic_sender(client &_client, string host, full_topic_t in_topic);
+    generic_topic_sender(client &_client, string host, endpoint_t in_topic);
 
     void status(const char *message);
+    void output(const char *message);
     string endpoint() const { return m_endpoint; }
 
 private:

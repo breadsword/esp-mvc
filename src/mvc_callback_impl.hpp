@@ -6,7 +6,12 @@
 #include "parse_topic.hpp"
 
 template <class client>
-generic_topic_sender<client>::generic_topic_sender(client &_client, string host, string in_topic) : m_client(_client), m_endpoint(parse_topic(in_topic)), m_host(host)
+generic_topic_sender<client>::generic_topic_sender(client &_client, string host, full_topic_t in_topic) : m_client(_client), m_endpoint(parse_topic(in_topic.get())), m_host(host)
+{
+}
+
+template <class client>
+generic_topic_sender<client>::generic_topic_sender(client &_client, string host, endpoint_t in_topic) : m_client(_client), m_endpoint(in_topic.get()), m_host(host)
 {
 }
 
@@ -14,6 +19,13 @@ template <class client>
 void generic_topic_sender<client>::status(const char *message)
 {
     const string outtopic = string{"/"} + m_host + "/status/" + m_endpoint;
+    m_client.publish(outtopic.c_str(), message);
+}
+
+template <class client>
+void generic_topic_sender<client>::output(const char *message)
+{
+    const string outtopic = string{"/"} + m_host + "/o/" + m_endpoint;
     m_client.publish(outtopic.c_str(), message);
 }
 
@@ -44,7 +56,7 @@ void mqtt_callback<client_t>::operator()(const char *topic, const uint8_t *paylo
 template <class client_t>
 generic_topic_sender<client_t> mqtt_callback<client_t>::create_sender(string topic)
 {
-    return generic_topic_sender<client_t>(client, host, topic);
+    return generic_topic_sender<client_t>(client, host, full_topic_t(topic));
 }
 
 template <class client_t>
