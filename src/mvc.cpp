@@ -3,7 +3,6 @@
 
 #include <tuple>
 
-#include <sstream>
 #include <algorithm>
 
 void Model_Node::register_change_callback(callback_t cb)
@@ -13,7 +12,7 @@ void Model_Node::register_change_callback(callback_t cb)
 
 void Model_Node::notify_subscribers() const
 {
-    for(auto cb : subscribers)
+    for (auto cb : subscribers)
     {
         cb(*this);
     }
@@ -29,11 +28,12 @@ std::tuple<string, string> Model_Node::notification() const
 }
 
 void Model_Node::add_value_string(ostream &) const
-{}
+{
+}
 
 Tree_Model_Node::Tree_Model_Node(string _topic, Tree_Model_Node *_parent) : Model_Node{}, topic{_topic}, parent{_parent}
 {
-    if(parent)
+    if (parent)
     {
         parent->children.push_back(std::ref(*this));
     }
@@ -44,7 +44,7 @@ bool Tree_Model_Node::operator==(const Tree_Model_Node &rhs) const
     return ((this->topic == rhs.topic) && (this->parent == rhs.parent));
 }
 
-void Tree_Model_Node::on_tree_execute(std::function<void (Tree_Model_Node &)> f)
+void Tree_Model_Node::on_tree_execute(std::function<void(Tree_Model_Node &)> f)
 {
     f(*this);
     for (auto c : children)
@@ -53,19 +53,18 @@ void Tree_Model_Node::on_tree_execute(std::function<void (Tree_Model_Node &)> f)
     }
 }
 
-
 std::vector<string> tokenize(const string path)
 {
     std::vector<string> res;
     //    auto word_end = path.begin();
     //    auto word_begin = word_end;
 
-    auto pred = [](char c){return c == Tree_Model_Node::separator[0];};
+    auto pred = [](char c) { return c == Tree_Model_Node::separator[0]; };
 
     // Advance to next separator
     auto word_begin = path.begin();
 
-    while(word_begin != path.end())
+    while (word_begin != path.end())
     {
         word_begin = std::find_if_not(word_begin, path.end(), pred);
         auto word_end = std::find_if(word_begin, path.end(), pred);
@@ -77,9 +76,7 @@ std::vector<string> tokenize(const string path)
     }
 
     return res;
-
 }
-
 
 Tree_Model_Node *Tree_Model_Node::search(string searchtopic)
 {
@@ -95,7 +92,7 @@ Tree_Model_Node *Tree_Model_Node::search(std::vector<string>::iterator it, std::
     }
 
     const string child_topic = *it;
-    auto child = std::find_if(children.begin(), children.end(), [&child_topic](children_t::value_type c_it){return c_it.get().topic == child_topic;});
+    auto child = std::find_if(children.begin(), children.end(), [&child_topic](children_t::value_type c_it) { return c_it.get().topic == child_topic; });
     if (child != children.end())
     {
         return child->get().search(++it, end);
@@ -104,7 +101,7 @@ Tree_Model_Node *Tree_Model_Node::search(std::vector<string>::iterator it, std::
     return nullptr;
 }
 
-void Tree_Model_Node::build_topic(ostream& s) const
+void Tree_Model_Node::build_topic(ostream &s) const
 {
     if (parent != nullptr)
     {
@@ -114,8 +111,8 @@ void Tree_Model_Node::build_topic(ostream& s) const
     }
 }
 
-template<>
-void Value_Model<int>::set_from(const string& s)
+template <>
+void Value_Model<int>::set_from(const string &s)
 {
     char *end = nullptr;
     auto val = strtol(s.c_str(), &end, 10);
@@ -125,8 +122,8 @@ void Value_Model<int>::set_from(const string& s)
     }
 }
 
-template<>
-void Value_Model<double>::set_from(const string& s)
+template <>
+void Value_Model<double>::set_from(const string &s)
 {
     char *end = nullptr;
     auto val = strtod(s.c_str(), &end);
