@@ -5,6 +5,7 @@
 
 #include "types.hpp"
 
+// TODO: counter-check method with Tree_Model_Node::tokenize()
 string parse_topic(const string& topic);
 
 class topic_parse_error : public std::logic_error
