@@ -35,8 +35,6 @@ private:
     string m_host = "none";
 };
 
-typedef generic_topic_sender<PubSubClient> topic_sender;
-
 template <class client_t>
 class mqtt_callback
 {
