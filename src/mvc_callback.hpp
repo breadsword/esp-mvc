@@ -3,6 +3,7 @@
 
 #include <types.hpp>
 #include <named_type.hpp>
+#include <mvc.hpp>
 
 // MQTT topics consist of three parts:
 // [HOST]/[DIR]/[ENDPOINT]
@@ -58,5 +59,17 @@ private:
     string host;
     Tree_Model_Node &root;
 };
+
+template <class client_t>
+auto mqtt_viewer(string host, client_t &client)
+{
+    return [&host, &client](const Model_Node &node) {
+        string topic, value;
+        std::tie(topic, value) = node.notification();
+
+        auto sender = generic_topic_sender<client_t>(client, host, endpoint_t(topic));
+        client.publish((string{"/"} + host + "/o" + topic).c_str(), value.c_str());
+    };
+}
 
 #endif //MVC_CALLBACK_HPP_INCLUDED
