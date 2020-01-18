@@ -58,6 +58,8 @@ private:
     Tree_Model_Node &root;
 };
 
+typedef generic_topic_sender<PubSubClient> topic_sender;
+
 template <class client_t>
 auto mqtt_viewer(string host, client_t &client)
 {
