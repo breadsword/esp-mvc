@@ -140,3 +140,29 @@ void Value_Model<double>::set_from(const string &s)
         set(get());
     }
 }
+
+template <>
+void Value_Model<float>::set_from(const string &s)
+{
+    char *end = nullptr;
+    auto val = strtof(s.c_str(), &end);
+    if (end != s.c_str())
+    {
+        set(val);
+    }
+    else
+    {
+        set(get());
+    }
+}
+
+template <>
+void Value_Model<string>::set_from(const string &s)
+{
+    set(s);
+}
+
+template <>
+void Value_Model<bool>::set_from(const string &s)
+{
+}

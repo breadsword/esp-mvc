@@ -12,6 +12,8 @@ LIST(APPEND LIB_SOURCES
     src/fbstream.hpp
     src/fbstream.cpp
     src/types.hpp
+    src/parse_topic.hpp
+    src/parse_topic.cpp
     )
 
 LIST(APPEND EXEC_SOURCES
@@ -29,6 +31,7 @@ TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${LIBRARY_NAME})
 LIST( APPEND TESTSOURCES
     test/test_mvc
     test/test_fixedbufstream
+    test/test_parse_topic
     )
 
 find_package(Qt5 COMPONENTS Test REQUIRED
