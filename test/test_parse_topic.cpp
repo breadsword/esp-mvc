@@ -20,13 +20,30 @@ private slots:
 
 void test_parse_topic::test_empty_string()
 {
-    QVERIFY_EXCEPTION_THROWN(parse_topic(string{}), topic_parse_error);
-
-    QVERIFY_EXCEPTION_THROWN(parse_topic(string{"/"}), topic_parse_error);
-    QVERIFY_EXCEPTION_THROWN(parse_topic(string{"//"}), topic_parse_error);
-    QVERIFY_EXCEPTION_THROWN(parse_topic(string{"/host"}), topic_parse_error);
-    QVERIFY_EXCEPTION_THROWN(parse_topic(string{"/host/dir"}), topic_parse_error);
-    QVERIFY_EXCEPTION_THROWN(parse_topic(string{"/host/dir/"}), topic_parse_error);
+    {
+        const auto s = parse_topic(string{});
+        QVERIFY2(s=="", (format("Got: '%1%'")%s).str().c_str());
+    }
+    {
+        const auto s = parse_topic(string{"/"});
+        QVERIFY2(s=="", (format("Got: '%1%'")%s).str().c_str());
+    }
+    {
+        const auto s = parse_topic(string{"//"});
+        QVERIFY2(s=="", (format("Got: '%1%'")%s).str().c_str());
+    }
+    {
+        const auto s = parse_topic(string{"/host"});
+        QVERIFY2(s=="", (format("Got: '%1%'")%s).str().c_str());
+    }
+    {
+        const auto s = parse_topic(string{"/host/dir"});
+        QVERIFY2(s=="", (format("Got: '%1%'")%s).str().c_str());
+    }
+    {
+        const auto s = parse_topic(string{"/host/dir/"});
+        QVERIFY2(s=="", (format("Got: '%1%'")%s).str().c_str());
+    }
 
     {
         const auto s = parse_topic({"/wemos/o/topic"});
