@@ -116,20 +116,27 @@ void Value_Model<int>::set_from(const string &s)
 {
     char *end = nullptr;
     auto val = strtol(s.c_str(), &end, 10);
-    if (end)
+    if (end != s.c_str())
     {
         set(val);
     }
+    else
+    {
+        set(get());
+    }
 }
 
-// FIXME: value is set to 0 when string cannot be parsed. Should not set anything.
 template <>
 void Value_Model<double>::set_from(const string &s)
 {
     char *end = nullptr;
     auto val = strtod(s.c_str(), &end);
-    if (end)
+    if (end != s.c_str())
     {
         set(val);
+    }
+    else
+    {
+        set(get());
     }
 }
