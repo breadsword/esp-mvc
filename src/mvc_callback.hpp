@@ -61,15 +61,25 @@ private:
 typedef generic_topic_sender<PubSubClient> topic_sender;
 
 template <class client_t>
-auto mqtt_viewer(string host, client_t &client)
+class mqtt_viewer
 {
-    return [&host, &client](const Model_Node &node) {
+public:
+    mqtt_viewer(string _host, client_t &_client) : host{_host}, client(_client)
+    {
+    }
+
+    void operator()(const Model_Node &node)
+    {
         string topic, value;
         std::tie(topic, value) = node.notification();
 
-        auto sender = generic_topic_sender<client_t>(client, host, endpoint_t(topic));
-        client.publish((string{"/"} + host + "/o" + topic).c_str(), value.c_str());
-    };
-}
+        auto sender = generic_topic_sender<client_t>{client, host, endpoint_t{topic}};
+        sender.output(value.c_str());
+    }
+
+private:
+    string host;
+    client_t &client;
+};
 
 #endif //MVC_CALLBACK_HPP_INCLUDED
