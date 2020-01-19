@@ -50,10 +50,10 @@ public:
 
     void on_tree_execute(std::function<void(Tree_Model_Node &)> f);
 
-    Tree_Model_Node *search(string searchtopic);    
+    Tree_Model_Node *search(string searchtopic);
     Tree_Model_Node *search(std::vector<string>::iterator it, std::vector<string>::iterator end);
 
-    virtual void set_from(const string&){}
+    virtual void set_from(const string &) {}
 
 protected:
     virtual void build_topic(ostream &) const override;
@@ -72,7 +72,7 @@ public:
     {
     }
 
-    virtual void set_from(const string&) override;
+    virtual void set_from(const string &) override;
     void set(T);
     T get() const;
 
@@ -84,9 +84,5 @@ private:
 };
 
 std::vector<string> tokenize(const string path);
-
-
-
-#include "mvc.tpp"
 
 #endif //MVC_HPP_INCLUDED
