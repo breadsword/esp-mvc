@@ -122,6 +122,7 @@ void Value_Model<int>::set_from(const string &s)
     }
 }
 
+// FIXME: value is set to 0 when string cannot be parsed. Should not set anything.
 template <>
 void Value_Model<double>::set_from(const string &s)
 {
