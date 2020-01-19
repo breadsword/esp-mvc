@@ -1,5 +1,7 @@
 #include "parse_topic.hpp"
 
+#include <mvc.hpp>
+
 #include <algorithm>
 
 string::const_iterator next_token(string::const_iterator start, string::const_iterator end)
@@ -14,36 +16,42 @@ string::const_iterator next_token(string::const_iterator start, string::const_it
     return r;
 }
 
+template <class Iterator>
+string concat(Iterator begin, Iterator end)
+{
+    if (begin == end)
+    {
+        // empty string on empty range
+        return "";
+    }
+    const auto el = *begin;
+    const auto next = ++begin;
+    if (next == end)
+    {
+        // just the last element, if it is one
+        return el;
+    }
+    else
+    {
+        // this element separated from the rest
+        return el + Tree_Model_Node::separator + concat(next, end);
+    }
+}
+
 string parse_topic(const string &topic)
 {
-    auto begin = std::begin(topic);
+    auto tokens = tokenize(topic);
 
-    auto end = next_token(begin, std::end(topic));
-    if (end == std::end(topic))
+    if (tokens.size() >= 3)
     {
-        return "";
-        //throw (topic_parse_error{"no Host part found"});
+
+        return concat(tokens.begin() + 2, tokens.end());
     }
-
-    const string host{begin, end};
-
-    begin = end + 1;
-    end = next_token(begin, std::end(topic));
-    if (end == std::end(topic))
+    else
     {
+        // not found
         return "";
-        // throw (topic_parse_error{"no Dir part found"});
     }
-    const string dir{begin, end};
-
-    begin = end + 1;
-    if (begin == std::end(topic))
-    {
-        return "";
-        // throw(topic_parse_error{"no topic fonud"});
-    }
-
-    return string{begin, std::end(topic)};
 }
 
 // strip leading slashes from string passed in.

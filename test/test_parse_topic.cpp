@@ -55,8 +55,14 @@ void test_parse_topic::test_empty_string()
     }
     {
         const auto s = parse_topic({"wemos/o/topic/"});
-        QVERIFY2(s=="topic/", (format("Got: '%1%'")%s).str().c_str());
+        QVERIFY2(s=="topic", (format("Got: '%1%'")%s).str().c_str());
     }
+    {
+        const auto s = parse_topic({"wemos/o/topic/lala"});
+        QVERIFY2(s=="topic/lala", (format("Got: '%1%'")%s).str().c_str());
+    }
+
+
 }
 
 QTEST_APPLESS_MAIN(test_parse_topic)
