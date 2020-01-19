@@ -2,7 +2,6 @@
 
 #include <algorithm>
 
-
 string::const_iterator next_token(string::const_iterator start, string::const_iterator end)
 {
     // skip one leading slash for token
@@ -28,8 +27,7 @@ string parse_topic(const string &topic)
 
     const string host{begin, end};
 
-
-    begin = end+1;
+    begin = end + 1;
     end = next_token(begin, std::end(topic));
     if (end == std::end(topic))
     {
@@ -38,7 +36,7 @@ string parse_topic(const string &topic)
     }
     const string dir{begin, end};
 
-    begin = end+1;
+    begin = end + 1;
     if (begin == std::end(topic))
     {
         return "";
@@ -48,3 +46,15 @@ string parse_topic(const string &topic)
     return string{begin, std::end(topic)};
 }
 
+// strip leading slashes from string passed in.
+// Keep rest of string intact
+string parse_endpoint(const string &endpoint)
+{
+    auto i = endpoint.begin();
+    while (i != endpoint.end() && *i == '/')
+    {
+        ++i;
+    }
+
+    return string{i, endpoint.end()};
+}

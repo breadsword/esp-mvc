@@ -11,7 +11,7 @@ generic_topic_sender<client>::generic_topic_sender(client &_client, string host,
 }
 
 template <class client>
-generic_topic_sender<client>::generic_topic_sender(client &_client, string host, endpoint_t in_topic) : m_client(_client), m_endpoint(in_topic.get()), m_host(host)
+generic_topic_sender<client>::generic_topic_sender(client &_client, string host, endpoint_t in_endpoint) : m_client(_client), m_endpoint(parse_endpoint(in_endpoint.get())), m_host(host)
 {
 }
 
