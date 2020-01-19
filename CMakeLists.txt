@@ -8,7 +8,7 @@ INCLUDE_DIRECTORIES(${CURRENT_SOURCE_PATH})
 LIST(APPEND LIB_SOURCES
     src/mvc.hpp
     src/mvc.cpp
-    src/mvc.tpp
+    src/mvc_impl.hpp
     src/fbstream.hpp
     src/fbstream.cpp
     src/types.hpp

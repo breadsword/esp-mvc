@@ -1,6 +1,7 @@
 #include <QtTest>
 
 #include "mvc.hpp"
+#include "mvc_impl.hpp"
 
 #include <boost/format.hpp>
 using boost::format;
