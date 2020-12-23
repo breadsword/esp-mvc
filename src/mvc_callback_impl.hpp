@@ -34,7 +34,19 @@ string make_string(const uint8_t *data, unsigned int len);
 template <class client_t>
 void mqtt_callback<client_t>::operator()(const char *topic, const uint8_t *payload, unsigned int payload_len)
 {
-    auto sender = create_sender(string{topic});
+    this->operator()(string(topic), make_string(payload, payload_len));
+}
+
+template <class client_t>
+void mqtt_callback<client_t>::operator()(gsl::span<const unsigned char> topic, gsl::span<const unsigned char> payload)
+{
+    this->operator()(string(topic.begin(), topic.end()), string(payload.begin(), payload.end()));
+}
+
+template <class client_t>
+void mqtt_callback<client_t>::operator()(string topic, string payload)
+{
+    auto sender = create_sender(topic);
     auto node = lookup_node(sender.endpoint());
 
     if (!node)
@@ -43,9 +55,9 @@ void mqtt_callback<client_t>::operator()(const char *topic, const uint8_t *paylo
         return;
     }
 
-    if (payload_len > 0)
+    if (!payload.empty())
     {
-        set_value(*node, make_string(payload, payload_len));
+        set_value(*node, string{payload.begin(), payload.end()});
     }
     else
     {

@@ -4,6 +4,7 @@
 #include <types.hpp>
 #include <named_type.hpp>
 #include <mvc.hpp>
+#include <gsl-lite/gsl-lite.hpp>
 
 // MQTT topics consist of three parts:
 // [HOST]/[DIR]/[ENDPOINT]
@@ -12,7 +13,6 @@
 // DIR being one of i (input), o (output), e (error/status message)
 // and ENDPOINT a path to the actual value in the status tree
 
-class PubSubClient;
 class Tree_Model_Node;
 
 using full_topic_t = NamedType<string, struct FullTopic>;
@@ -49,16 +49,21 @@ public:
     void set_value(Tree_Model_Node &node, string new_val);
     void notify(Tree_Model_Node &node);
 
+    /// The way PubSubClient calls this callback
     void
     operator()(const char *topic, const uint8_t *payload, unsigned int payload_len);
+    /// The way mikado calls this callback
+    void
+    operator()(gsl::span<const unsigned char> topic, gsl::span<const unsigned char> payload);
+    /// The way to implement this callback
+    void
+    operator()(string topic, string payload);
 
 private:
     client_t &client;
     string host;
     Tree_Model_Node &root;
 };
-
-typedef generic_topic_sender<PubSubClient> topic_sender;
 
 template <class client_t>
 class mqtt_viewer
