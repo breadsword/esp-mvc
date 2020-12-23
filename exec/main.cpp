@@ -39,17 +39,7 @@ void reporting_viewer(const Model_Node& m)
 
 int main(int, char **)
 {
-
-    std::vector<std::reference_wrapper<Model_Node> > registry;
-    registry.push_back(temperature);
-    registry.push_back(thermos_output);
-    registry.push_back(output_enable);
-    registry.push_back(switch_value);
-
-    for (auto m : registry)
-    {
-        m.get().register_change_callback(reporting_viewer);
-    }
+    root_node.on_tree_execute([](Tree_Model_Node& n){n.register_change_callback(reporting_viewer);});
 
     temperature.register_change_callback(thermos);
     thermos_output.register_change_callback(pin);
