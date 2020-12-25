@@ -166,4 +166,16 @@ void Value_Model<string>::set_from(const string &s)
 template <>
 void Value_Model<bool>::set_from(const string &s)
 {
+    if (s == "0")
+    {
+        set(false);
+    }
+    else if (s == "1")
+    {
+        set(true);
+    }
+    else
+    {
+        set(get());
+    }
 }
